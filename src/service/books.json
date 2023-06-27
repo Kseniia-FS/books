@@ -1,61 +1,30 @@
 [
   {
-    "id": "u9kgwNWGi3uUUwh0b8V49",
     "title": "Eloquent JavaScript, Third Edition",
     "author": "Marijn Haverbeke"
   },
   {
-    "id": "YxhM4QDxPeA3SmPHcEZPJ",
     "title": "Practical Modern JavaScript",
     "author": "Nicolas Bevacqua"
   },
   {
-    "id": "zCd_RioNMOBaQwAXnc8Px",
     "title": "Understanding ECMAScript 6",
     "author": "Nicholas C. Zakas"
   },
   {
-    "id": "ck89qe3HriUDHe09TBoJ8",
     "title": "Speaking JavaScript",
     "author": "Axel Rauschmayer"
   },
   {
-    "id": "e1Tpn_I3wBkLREY6wG0lb",
     "title": "Learning JavaScript Design Patterns",
     "author": "Addy Osmani"
   },
   {
-    "id": "Op8ApLTY0-Vn2cR0vDIwG",
     "title": "Hello",
     "author": "Kyle Simpson"
   },
   {
-    "id": "dkJSszfrRVtLVR_MfRqcu",
     "title": "Pro Git",
     "author": "Scott Chacon and Ben Straub"
-  },
-  {
-    "id": "4spwBYa6-04KWEmdNxHTt"
-  },
-  {
-    "id": "0wjuiwXyMmKiJQA8R-TvF"
-  },
-  {
-    "id": "svoMu4sLk1JTM6iPF2Bnd"
-  },
-  {
-    "id": "Xep7JXhL1mDEI9pTanJhg"
-  },
-  {
-    "id": "qR6HVIeLLkXAnOjc-9lXu"
-  },
-  {
-    "id": "w-GiRSnd8RlLoZ6eJERKe"
-  },
-  {
-    "id": "sM-QPu0kE3G-oBZtGS5cG"
-  },
-  {
-    "id": "vOa68LMvelTbjhZp-NFwd"
   }
 ]
