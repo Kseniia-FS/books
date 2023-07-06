@@ -10,4 +10,4 @@ error.status = status;
 return error;
 };
 
-module.exports = { ErrorHandling };
+module.exports = ErrorHandling ;

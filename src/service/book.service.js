@@ -1,49 +1,37 @@
-const fs = require("fs/promises");
-const path = require("path");
-const { nanoid } = require("nanoid");
+const { Book } = require('../model/book');
 
-const bookspath = path.join(__dirname, "/books.json");
-
-const updateBooks = async (books) =>
-await fs.writeFile(bookspath, JSON.stringify(books, null, 2));
-
-const getAllBooks = async () => {
-const data = await fs.readFile(bookspath);
-return JSON.parse(data);
+const getAllBooks = async (user_id) => {
+  const data = await Book.find({ user_id }, '-createdAt -updatedAt').populate(
+    'user_id',
+    'name',
+  );
+  return data;
 };
 
 const getById = async (id) => {
-const books = await getAllBooks();
-const result = books.find((book) => book.id === id);
-return result || null;
+  const book = await Book.findById(id);
+  return book;
 };
 
-const addBook = async (data) => {
-const books = await getAllBooks();
-const newBook = {
-id: nanoid(),
-...data,
-};
-books.push(newBook);
-await updateBooks(books);
-return newBook;
+const addBook = async (data, user_id) => {
+  const newBook = await Book.create({ ...data, user_id });
+  return newBook;
 };
 
 const updateById = async (id, data) => {
-const books = await getAllBooks();
-const bookIndex = books.findIndex((el) => el.id === id);
-books[bookIndex] = { ...books[bookIndex], ...data };
-await updateBooks(books);
-return books[bookIndex] || null;
+  const result = await Book.findByIdAndUpdate(id, data, { new: true });
+  return result;
 };
 
 const removeById = async (id) => {
-const books = await getAllBooks();
-const bookIndex = books.findIndex((el) => el.id === id);
-
-const [result] = books.splice(bookIndex, 1);
-await updateBooks(books);
-return result;
+  const result = await Book.findByIdAndRemove(id);
+  return result;
 };
 
-module.exports = { getAllBooks, getById, addBook, updateById, removeById };
+module.exports = {
+  getAllBooks,
+  getById,
+  addBook,
+  updateById,
+  removeById,
+};

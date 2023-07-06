@@ -1,12 +1,15 @@
-const validateBook = (schema) => {
-const func = (req, res, next) => {
-console.log(req.body);
-const { error } = schema.validate(req.body);
-console.log(error);
-if (error) throw new Error("Error");
-next();
-};
-return func;
+const { ErrorHandling } = require('../helper');
+
+const validateBody = (schema) => {
+  const func = (req, res, next) => {
+    const { error } = schema.validate(req.body);
+    if (error) {
+      next(ErrorHandling(400, error.message));
+    }
+    next();
+  };
+
+  return func;
 };
 
-module.exports = { validateBook };
+module.exports = validateBody;

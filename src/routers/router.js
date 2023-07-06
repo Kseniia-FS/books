@@ -1,20 +1,37 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 const {
-getAll,
-getBookByID,
-addNewBook,
-updateBook,
-removeBook,
-} = require("../controller/book.controller");
-const { validateBook } = require("../middleware/validateBook");
-const { bookSchema } = require("../schema/bookSchema");
-const { contrWrapper } = require("../helper/contrWrapper");
+  getAllBooks,
+  getBookByID,
+  addNewBook,
+  updateBook,
+  removeBook,
+  updateFavoriteBook,
+} = require('../controller/book.controller');
+const { validateBody, authMiddleware } = require('../middleware/');
+const { schemas } = require('../model/book');
+const { contrWrapper } = require('../helper');
 
-router.get("/books", contrWrapper(getAll));
-router.get("/:id", getBookByID);
-router.post("/add", validateBook(bookSchema), addNewBook);
-router.put("/post/:id", updateBook);
-router.delete("/delete/:id", removeBook);
+router.get('/books', authMiddleware, getAllBooks);
+router.get('/:id', authMiddleware, contrWrapper(getBookByID));
+router.post(
+  '/',
+  authMiddleware,
+  validateBody(schemas.addSchema),
+  contrWrapper(addNewBook),
+);
+router.put(
+  '/:id',
+  authMiddleware,
+  validateBody(schemas.addSchema),
+  contrWrapper(updateBook),
+);
+router.patch(
+  '/:id/favorite',
+  authMiddleware,
+  validateBody(schemas.updateFavoriteSchema),
+  contrWrapper(updateFavoriteBook),
+);
+router.delete('/:id', authMiddleware, contrWrapper(removeBook));
 
 module.exports = router;
