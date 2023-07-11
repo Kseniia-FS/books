@@ -17,6 +17,7 @@ const loggerFormat = app.get('env') === 'development' ? 'dev' : 'short';
 app.use(logger(loggerFormat));
 app.use(cors());
 app.use(express.json());
+app.use(express.static('public'));
 
 app.use('/api/v1', bookRouter);
 app.use('/auth', authRouter);

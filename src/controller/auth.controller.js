@@ -1,5 +1,8 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const gravatar = require('gravatar');
+const fs = require('fs/promises');
+const path = require('path');
 require('dotenv').config();
 
 const { User } = require('../model/user');
@@ -15,8 +18,14 @@ const register = async (req, res) => {
     throw ErrorHandling(409, 'Such user exists');
   }
 
+  const avatarURL = gravatar.url(email);
   const hashedPassword = await bcrypt.hash(password, 10);
-  const newUser = await User.create({ name, email, password: hashedPassword });
+  const newUser = await User.create({
+    name,
+    email,
+    password: hashedPassword,
+    avatar_url: avatarURL,
+  });
   res.status(201).json({
     name: newUser.name,
   });
@@ -59,4 +68,23 @@ const getCurrent = async (req, res) => {
   res.json({ name, message: 'Token is valid' });
 };
 
-module.exports = { register, login, logout, getCurrent };
+const avatarsDir = path.join(__dirname, '../', 'public', 'avatars');
+
+const updateAvatar = async (req, res) => {
+  const { _id } = req.user;
+  const { path: tempUpload, originalname } = req.file;
+  const extention = originalname.split('.').pop();
+  const filename = `${_id}.${extention}`;
+  const resultUpload = path.join(avatarsDir, filename);
+  await fs.rename(tempUpload, resultUpload);
+  const avatarURL = path.join('avatars', filename);
+  await User.findByIdAndUpdate(_id, { avatar_url: avatarURL });
+
+  res.json({
+    avatarURL,
+  });
+};
+
+module.exports = updateAvatar;
+
+module.exports = { register, login, logout, getCurrent, updateAvatar };
