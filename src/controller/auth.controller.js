@@ -3,12 +3,15 @@ const jwt = require('jsonwebtoken');
 const gravatar = require('gravatar');
 const fs = require('fs/promises');
 const path = require('path');
+const { nanoid } = require('nanoid');
 require('dotenv').config();
 
 const { User } = require('../model/user');
 const ErrorHandling = require('../helper/errorReq');
+const sendEmail = require('../helper/sendEmail');
 
 const { SECRET_KEY } = process.env;
+const { PORT } = process.env;
 
 const register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -19,13 +22,22 @@ const register = async (req, res) => {
   }
 
   const avatarURL = gravatar.url(email);
+  const verificationCode = nanoid();
   const hashedPassword = await bcrypt.hash(password, 10);
   const newUser = await User.create({
     name,
     email,
     password: hashedPassword,
     avatar_url: avatarURL,
+    verification_code: verificationCode,
   });
+
+  const mail = {
+    to: email,
+    subject: 'Verify your email',
+    html: `<a href="http://localhost:${PORT}/auth/verify/${verificationCode}">Press here</a>`,
+  };
+  await sendEmail(mail);
   res.status(201).json({
     name: newUser.name,
   });
@@ -85,6 +97,51 @@ const updateAvatar = async (req, res) => {
   });
 };
 
-module.exports = updateAvatar;
+const verifyEmail = async (req, res) => {
+  const { verificatioCode } = req.params;
+  const user = await User.findOne({ verificatioCode });
 
-module.exports = { register, login, logout, getCurrent, updateAvatar };
+  if (!user) {
+    throw ErrorHandling(404, 'User not found');
+  }
+
+  await User.findByIdAndUpdate(user._id, {
+    verify: true,
+    verification_code: '',
+  });
+  res.json({
+    message: 'Email verified',
+  });
+};
+
+const resendVerifyEmail = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw ErrorHandling(404, 'User not found');
+  }
+
+  if (user.verify) {
+    throw ErrorHandling(400, 'User already verified');
+  }
+
+  const mail = {
+    to: email,
+    subject: 'Verify your email',
+    html: `<a href="http://localhost:${PORT}/auth/verify/${user.verification_code}">Press here</a>`,
+  };
+  await sendEmail(mail);
+  res.json({
+    message: 'Verify email has been sent',
+  });
+};
+
+module.exports = {
+  register,
+  login,
+  logout,
+  getCurrent,
+  updateAvatar,
+  verifyEmail,
+  resendVerifyEmail,
+};
