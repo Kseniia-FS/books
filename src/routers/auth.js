@@ -7,6 +7,8 @@ const {
   logout,
   getCurrent,
   updateAvatar,
+  verifyEmail,
+  resendVerifyEmail,
 } = require('../controller/auth.controller');
 const { contrWrapper } = require('../helper');
 
@@ -27,5 +29,10 @@ router.patch(
   upload.single('avatar'),
   contrWrapper(updateAvatar),
 );
-
+router.get('/verify/:verificatioCode', contrWrapper(verifyEmail));
+router.post(
+  '/verify',
+  validateBody(schemas.verifySchema),
+  contrWrapper(resendVerifyEmail),
+);
 module.exports = router;
